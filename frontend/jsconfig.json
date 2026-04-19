@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["Religion/src/*"]
+      "@/*": ["src/*"]
     },
     "jsx": "react-jsx",
     "module": "esnext",
@@ -16,6 +16,6 @@
     "resolveJsonModule": true,
     "types": []
   },
-  "include": ["Religion/src/components/**/*.js", "Religion/src/pages/**/*.jsx", "Religion/src/Layout.jsx"],
+  "include": ["src/components/**/*.js", "src/pages/**/*.jsx", "src/Layout.jsx", "src/religions/**/*.jsx", "src/religions/**/*.js"],
   "exclude": ["node_modules"]
 }

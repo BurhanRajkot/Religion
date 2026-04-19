@@ -6,8 +6,8 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
-import IslamTree from './pages/IslamTree';
-import NodePage from './pages/NodePage';
+import IslamTree from './religions/islam/pages/IslamTree';
+import NodePage from './religions/islam/pages/NodePage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();

@@ -1,5 +1,5 @@
-import Navbar from '../components/Navbar';
-import IslamGraph from '../components/IslamGraph';
+import Navbar from '../../../components/Navbar';
+import IslamGraph from '../graphs/IslamGraph';
 
 export default function IslamTree() {
   return (

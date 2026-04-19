@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import NodeTabs from '../components/NodeTabs';
+import Navbar from '../../../components/Navbar';
+import NodeTabs from '../../../components/NodeTabs';
 import { getNodeData } from '../data/nodes/index';
 import { findNode, islamTree } from '../data/islamTree';
 
