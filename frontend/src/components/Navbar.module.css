@@ -1,0 +1,38 @@
+.nav {
+  height: 60px;
+  background: #0F1117;
+  border-bottom: 1px solid #252A35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 56px; /* px-14 in tailwind is 3.5rem or 56px */
+  flex-shrink: 0;
+}
+
+.brand {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #C1623F;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* gap-8 in tailwind is 2rem or 32px */
+}
+
+.link {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #8A857C;
+  text-decoration: none;
+  transition: color 180ms ease-out;
+}
+
+.link:hover {
+  color: #E8E2D9;
+}

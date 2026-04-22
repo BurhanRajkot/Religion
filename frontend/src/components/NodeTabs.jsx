@@ -1,18 +1,15 @@
 import { useState } from 'react';
+import styles from './NodeTabs.module.css';
 
 const TABS = ['Overview', 'Beliefs', 'Practices', 'Texts', 'History', 'Geography', 'Culture', 'Controversies', 'Research', 'Sources'];
 
 // ─── sub-components ──────────────────────────────────────────────────────────
 
 function Badge({ type }) {
-  const styles = {
-    primary: { background: '#1A2010', border: '1px solid #3B6D11', color: '#639922' },
-    hadith: { background: '#1A1C10', border: '1px solid #854F0B', color: '#EF9F27' },
-    jurisprudence: { background: '#1A1810', border: '1px solid #C1623F', color: '#C1623F' },
-  };
+  const typeClass = type === 'primary' ? styles.badgePrimary : type === 'hadith' ? styles.badgeHadith : styles.badgeJurisprudence;
   const labels = { primary: 'Primary', hadith: 'Hadith', jurisprudence: 'Jurisprudence' };
   return (
-    <span style={{ ...styles[type], fontFamily: 'Inter', fontSize: 10, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: 3, padding: '2px 7px' }}>
+    <span className={`${styles.badge} ${typeClass}`}>
       {labels[type] || type}
     </span>
   );
@@ -20,14 +17,14 @@ function Badge({ type }) {
 
 function SectionHeader({ children }) {
   return (
-    <h2 style={{ fontFamily: 'Playfair Display', fontSize: 22, fontWeight: 400, color: '#E8E2D9', marginBottom: 24, marginTop: 0 }}>
+    <h2 className={styles.sectionHeader}>
       {children}
     </h2>
   );
 }
 
 function Divider() {
-  return <div style={{ height: 1, background: '#252A35', margin: '32px 0' }} />;
+  return <div className={styles.divider} />;
 }
 
 // ─── tabs ─────────────────────────────────────────────────────────────────────
@@ -36,14 +33,14 @@ function OverviewTab({ data }) {
   return (
     <div>
       {data.paragraphs.map((p, i) => (
-        <p key={i} style={{ fontFamily: 'Inter', fontSize: 15, color: '#8A857C', lineHeight: 1.8, marginBottom: 20 }}>{p}</p>
+        <p key={i} className={styles.paragraph}>{p}</p>
       ))}
       <Divider />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className={styles.grid2}>
         {data.keyFacts.map((f, i) => (
-          <div key={i} style={{ background: '#181C24', border: '1px solid #252A35', borderRadius: 6, padding: 20 }}>
-            <div style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#8A857C', marginBottom: 8 }}>{f.label}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 15, color: '#E8E2D9' }}>{f.value}</div>
+          <div key={i} className={styles.card}>
+            <div className={styles.cardLabel}>{f.label}</div>
+            <div className={styles.cardValue}>{f.value}</div>
           </div>
         ))}
       </div>
@@ -55,11 +52,11 @@ function BeliefsTab({ data }) {
   return (
     <div>
       <SectionHeader>Core theological positions</SectionHeader>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className={styles.grid2}>
         {data.map((b, i) => (
-          <div key={i} style={{ background: '#181C24', border: '1px solid #252A35', borderRadius: 6, padding: 22 }}>
-            <div style={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 500, color: '#E8E2D9', marginBottom: 10 }}>{b.title}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 14, color: '#8A857C', lineHeight: 1.7 }}>{b.description}</div>
+          <div key={i} className={`${styles.card} ${styles.cardPadLg}`}>
+            <div className={styles.cardTitle}>{b.title}</div>
+            <div className={styles.cardDesc}>{b.description}</div>
           </div>
         ))}
       </div>
@@ -73,11 +70,11 @@ function PracticesTab({ data }) {
       <SectionHeader>Ritual and daily practice</SectionHeader>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         {data.map((p, i) => (
-          <div key={i} style={{ display: 'flex', gap: 24, paddingTop: 24, paddingBottom: 24, borderBottom: '1px solid #252A35' }}>
-            <div style={{ fontFamily: 'Playfair Display', fontSize: 28, fontWeight: 400, color: '#3A2015', minWidth: 40, lineHeight: 1 }}>{String(i + 1).padStart(2, '0')}</div>
+          <div key={i} className={styles.practiceItem}>
+            <div className={styles.practiceNum}>{String(i + 1).padStart(2, '0')}</div>
             <div>
-              <div style={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 500, color: '#E8E2D9', marginBottom: 6 }}>{p.name}</div>
-              <div style={{ fontFamily: 'Inter', fontSize: 14, color: '#8A857C', lineHeight: 1.7 }}>{p.description}</div>
+              <div className={styles.practiceTitle}>{p.name}</div>
+              <div className={styles.cardDesc}>{p.description}</div>
             </div>
           </div>
         ))}
@@ -92,14 +89,14 @@ function TextsTab({ data }) {
       <SectionHeader>Sacred and scholarly texts</SectionHeader>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {data.map((t, i) => (
-          <div key={i} style={{ background: '#181C24', border: '1px solid #252A35', borderRadius: 6, padding: 20, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-            <div style={{ width: 3, borderRadius: 2, background: t.type === 'primary' ? '#C1623F' : '#252A35', alignSelf: 'stretch', flexShrink: 0 }} />
+          <div key={i} className={styles.textCard}>
+            <div className={`${styles.textIndicator} ${t.type === 'primary' ? styles.textIndicatorPrimary : styles.textIndicatorSecondary}`} />
             <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <span style={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 500, color: '#E8E2D9' }}>{t.name}</span>
+              <div className={styles.textHeader}>
+                <span className={styles.textName}>{t.name}</span>
                 <Badge type={t.type} />
               </div>
-              <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', lineHeight: 1.65 }}>{t.description}</div>
+              <div className={styles.textDesc}>{t.description}</div>
             </div>
           </div>
         ))}
@@ -112,14 +109,14 @@ function HistoryTab({ data }) {
   return (
     <div>
       <SectionHeader>Historical timeline</SectionHeader>
-      <div style={{ position: 'relative', paddingLeft: 100 }}>
-        <div style={{ position: 'absolute', left: 72, top: 0, bottom: 0, width: 1, background: '#252A35' }} />
+      <div className={styles.timeline}>
+        <div className={styles.timelineLine} />
         {data.map((ev, i) => (
-          <div key={i} style={{ position: 'relative', marginBottom: 36 }}>
-            <div style={{ position: 'absolute', left: -100, width: 80, fontFamily: 'Inter', fontSize: 12, fontWeight: 500, color: '#C1623F', textAlign: 'right', paddingTop: 2, lineHeight: 1.3 }}>{ev.year}</div>
-            <div style={{ position: 'absolute', left: -32, top: 4, width: 6, height: 6, background: '#C1623F' }} />
-            <div style={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 500, color: '#E8E2D9', marginBottom: 4 }}>{ev.event}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', lineHeight: 1.65 }}>{ev.description}</div>
+          <div key={i} className={styles.timelineEvent}>
+            <div className={styles.timelineYear}>{ev.year}</div>
+            <div className={styles.timelineDot} />
+            <div className={styles.timelineEventName}>{ev.event}</div>
+            <div className={styles.timelineDesc}>{ev.description}</div>
           </div>
         ))}
       </div>
@@ -131,21 +128,21 @@ function GeographyTab({ data }) {
   return (
     <div>
       <SectionHeader>Geographic distribution</SectionHeader>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className={styles.geoList}>
         {data.map((g, i) => (
           <div key={i}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-              <span style={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 500, color: '#E8E2D9' }}>{g.region}</span>
-              <span style={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 500, color: '#C1623F' }}>{g.percentage}%</span>
+            <div className={styles.geoHeader}>
+              <span className={styles.geoRegion}>{g.region}</span>
+              <span className={styles.geoPct}>{g.percentage}%</span>
             </div>
-            <div style={{ height: 4, background: '#252A35', borderRadius: 2, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${g.percentage}%`, background: '#C1623F', borderRadius: 2, transition: 'width 600ms ease-out' }} />
+            <div className={styles.geoBarBg}>
+              <div className={styles.geoBarFg} style={{ width: `${g.percentage}%` }} />
             </div>
-            <div style={{ fontFamily: 'Inter', fontSize: 12, color: '#8A857C', marginTop: 6 }}>{g.note}</div>
+            <div className={styles.geoNote}>{g.note}</div>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 32, fontFamily: 'Inter', fontSize: 12, color: '#8A857C' }}>
+      <div className={styles.geoFooter}>
         Note: Figures are estimates. Religious demographics vary by region and source.
       </div>
     </div>
@@ -156,12 +153,12 @@ function CultureTab({ data }) {
   return (
     <div>
       <SectionHeader>Cultural expressions</SectionHeader>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+      <div className={styles.grid3}>
         {data.map((c, i) => (
-          <div key={i} style={{ background: '#181C24', border: '1px solid #252A35', borderRadius: 6, padding: 22 }}>
-            <div style={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 500, color: '#E8E2D9', marginBottom: 10 }}>{c.category}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', lineHeight: 1.65, marginBottom: 12 }}>{c.description}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 11, color: '#8A857C', letterSpacing: '0.04em' }}>Sources available</div>
+          <div key={i} className={`${styles.card} ${styles.cardPadLg}`}>
+            <div className={styles.cultureTitle}>{c.category}</div>
+            <div className={styles.cultureDesc}>{c.description}</div>
+            <div className={styles.cultureSources}>Sources available</div>
           </div>
         ))}
       </div>
@@ -173,24 +170,24 @@ function ControversiesTab({ data }) {
   return (
     <div>
       <SectionHeader>
-        Points of scholarly and historical <span style={{ color: '#8B3A3A' }}>debate</span>
+        Points of scholarly and historical <span className={styles.redText}>debate</span>
       </SectionHeader>
-      <div style={{ background: '#1A1212', border: '1px solid #8B3A3A', borderRadius: 4, padding: '12px 16px', marginBottom: 24, fontFamily: 'Inter', fontSize: 13, color: '#C08080', lineHeight: 1.6 }}>
+      <div className={styles.debateBanner}>
         This section presents multiple perspectives without endorsing any. All claims are attributed to named scholars or traditions.
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className={styles.controversyList}>
         {data.map((c, i) => (
-          <div key={i} style={{ background: '#181C24', border: '1px solid #252A35', borderLeft: '3px solid #8B3A3A', borderRadius: '0 6px 6px 0', padding: 24 }}>
-            <div style={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 500, color: '#E8E2D9', marginBottom: 20 }}>{c.title}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: 20 }}>
+          <div key={i} className={styles.controversyCard}>
+            <div className={styles.cardTitle}>{c.title}</div>
+            <div className={styles.debateGrid}>
               <div>
-                <div style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#8A857C', marginBottom: 10 }}>{c.positionA.label}</div>
-                <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', lineHeight: 1.65 }}>{c.positionA.text}</div>
+                <div className={styles.debateLabel}>{c.positionA.label}</div>
+                <div className={styles.debateText}>{c.positionA.text}</div>
               </div>
-              <div style={{ background: '#252A35' }} />
+              <div className={styles.debateSep} />
               <div>
-                <div style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#8A857C', marginBottom: 10 }}>{c.positionB.label}</div>
-                <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', lineHeight: 1.65 }}>{c.positionB.text}</div>
+                <div className={styles.debateLabel}>{c.positionB.label}</div>
+                <div className={styles.debateText}>{c.positionB.text}</div>
               </div>
             </div>
           </div>
@@ -203,15 +200,15 @@ function ControversiesTab({ data }) {
 function ResearchTab({ data }) {
   return (
     <div>
-      <div style={{ background: '#1C1810', border: '1px solid #C1623F', borderRadius: 4, padding: '12px 20px', marginBottom: 24, fontFamily: 'Inter', fontSize: 13, color: '#C1623F', lineHeight: 1.6 }}>
+      <div className={styles.researchBanner}>
         This section contains comparative analysis and editorial perspective. It is clearly distinguished from documented fact.
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className={styles.researchList}>
         {data.map((r, i) => (
-          <div key={i} style={{ background: '#1C1810', border: '1px solid #2A2418', borderLeft: '3px solid #C1623F', borderRadius: '0 6px 6px 0', padding: 24 }}>
-            <div style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C1623F', marginBottom: 10 }}>Editorial analysis</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 500, color: '#E8E2D9', marginBottom: 14 }}>{r.title}</div>
-            <div style={{ fontFamily: 'Inter', fontSize: 14, color: '#8A857C', lineHeight: 1.75 }}>{r.analysis}</div>
+          <div key={i} className={styles.researchCard}>
+            <div className={styles.researchLabel}>Editorial analysis</div>
+            <div className={styles.researchTitle}>{r.title}</div>
+            <div className={styles.researchAnalysis}>{r.analysis}</div>
           </div>
         ))}
       </div>
@@ -225,12 +222,12 @@ function SourcesTab({ data }) {
       <SectionHeader>References and further reading</SectionHeader>
       <div>
         {data.map((s, i) => (
-          <div key={i} style={{ display: 'flex', gap: 24, padding: '18px 0', borderBottom: '1px solid #252A35' }}>
-            <div style={{ fontFamily: 'Playfair Display', fontSize: 16, color: '#3A3F4D', minWidth: 32, flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}.</div>
+          <div key={i} className={styles.sourceItem}>
+            <div className={styles.sourceNum}>{String(i + 1).padStart(2, '0')}.</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 500, color: '#E8E2D9', marginBottom: 4 }}>{s.author} — {s.title}</div>
-              <div style={{ fontFamily: 'Inter', fontSize: 13, color: '#8A857C', marginBottom: 8 }}>{s.publisher}, {s.year}</div>
-              <a href={s.url} style={{ fontFamily: 'Inter', fontSize: 12, color: '#C1623F', textDecoration: 'none' }}>View source →</a>
+              <div className={styles.sourceAuthor}>{s.author} — {s.title}</div>
+              <div className={styles.sourcePub}>{s.publisher}, {s.year}</div>
+              <a href={s.url} className={styles.sourceLink}>View source →</a>
             </div>
           </div>
         ))}
@@ -263,27 +260,19 @@ export default function NodeTabs({ sections }) {
   return (
     <div>
       {/* Tab bar */}
-      <div style={{ borderBottom: '1px solid #252A35', display: 'flex', gap: 0, overflowX: 'auto' }}>
+      <div className={styles.tabBar}>
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            style={{
-              fontFamily: 'Inter', fontSize: 12, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
-              color: activeTab === tab ? '#E8E2D9' : '#8A857C',
-              background: 'none', border: 'none', cursor: 'pointer',
-              padding: '12px 0', marginRight: 28, flexShrink: 0,
-              borderBottom: activeTab === tab ? '2px solid #C1623F' : '2px solid transparent',
-              transition: 'color 180ms ease-out',
-            }}
-            onMouseEnter={e => { if (activeTab !== tab) e.currentTarget.style.color = '#E8E2D9'; }}
-            onMouseLeave={e => { if (activeTab !== tab) e.currentTarget.style.color = '#8A857C'; }}>
+            className={`${styles.tab} ${activeTab === tab ? styles.tabActive : styles.tabInactive}`}>
             {tab}
           </button>
         ))}
       </div>
       {/* Tab content */}
-      <div style={{ paddingTop: 32 }}>
+      <div className={styles.tabContent}>
         {renderTab()}
       </div>
     </div>
   );
 }
+

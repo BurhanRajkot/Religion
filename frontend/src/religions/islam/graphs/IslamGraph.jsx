@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { islamTree } from '../data/islamTree';
 import { hasNodeData } from '../data/nodes/index';
 import { useNavigate } from 'react-router-dom';
+import styles from './IslamGraph.module.css';
 
 // ─── layout constants ─────────────────────────────────────────────────────────
 const NODE_W = 140;
@@ -136,29 +137,27 @@ export default function IslamGraph() {
   return (
     <div
       ref={containerRef}
-      style={{ width: '100%', height: '100%', overflow: 'hidden', cursor: dragging.current ? 'grabbing' : 'grab', userSelect: 'none', position: 'relative' }}
+      className={styles.container}
+      style={{ cursor: dragging.current ? 'grabbing' : 'grab' }}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}>
 
       {/* zoom controls */}
-      <div style={{ position: 'absolute', bottom: 24, right: 24, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <div className={styles.controls}>
         {[
           { label: '+', action: () => setTransform(t => ({ ...t, scale: Math.min(3, t.scale * 1.2) })) },
           { label: '−', action: () => setTransform(t => ({ ...t, scale: Math.max(0.2, t.scale * 0.8) })) },
         ].map(btn => (
-          <button key={btn.label} onClick={btn.action}
-            style={{ width: 32, height: 32, background: '#181C24', border: '1px solid #252A35', borderRadius: 3, color: '#8A857C', fontFamily: 'Inter', fontSize: 16, cursor: 'pointer', transition: 'border-color 180ms' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#C1623F'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#252A35'}>
+          <button key={btn.label} onClick={btn.action} className={styles.zoomBtn}>
             {btn.label}
           </button>
         ))}
       </div>
 
       {/* instruction hint */}
-      <div style={{ position: 'absolute', bottom: 24, left: 24, zIndex: 10, fontFamily: 'Inter', fontSize: 11, color: '#3A3F4D', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+      <div className={styles.instructionHint}>
         Scroll to zoom · drag to pan · click a node to explore
       </div>
 
@@ -166,7 +165,8 @@ export default function IslamGraph() {
         ref={svgRef}
         width={svgW}
         height={svgH}
-        style={{ display: 'block', transform: `translate(${transform.x}px,${transform.y}px) scale(${transform.scale})`, transformOrigin: '0 0', overflow: 'visible' }}>
+        className={styles.svgGraph}
+        style={{ transform: `translate(${transform.x}px,${transform.y}px) scale(${transform.scale})` }}>
 
         {/* connector lines — draw behind nodes */}
         <g>

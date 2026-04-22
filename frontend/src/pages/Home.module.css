@@ -1,0 +1,224 @@
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  --color-bg:         #0F1117;
+  --color-card:       #181C24;
+  --color-border:     #252A35;
+  --color-accent:     #C1623F;
+  --color-text:       #E8E2D9;
+  --color-muted:      #8A857C;
+  --color-dim:        #6B6560;
+  --color-tag:        #3A3F4D;
+
+  --font-serif:       'Playfair Display', serif;
+  --font-sans:        'Inter', sans-serif;
+
+  --transition-fast:  180ms ease-out;
+}
+
+/* ─── Page Shell ─────────────────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 56px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* prayer line-art — bottom-left, matte gold tones */
+.heroBg {
+  position: absolute;
+  left: -40px;
+  bottom: -20px;
+  z-index: 0;
+  opacity: 0.55;
+  pointer-events: none;
+  filter: brightness(0.85) contrast(0.8) saturate(0.65) sepia(0.25);
+}
+
+.heroBg img {
+  width: 500px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* ─── Hero Copy ──────────────────────────────────────────────────────────── */
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.heroEyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 20px;
+}
+
+.heroTitle {
+  font-family: var(--font-serif);
+  font-size: 62px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.08;
+  margin: 0 0 24px;
+}
+
+.heroBody {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--color-muted);
+  max-width: 520px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ─── Religion Cards Grid ────────────────────────────────────────────────── */
+.cardsSection {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 960px;
+}
+
+.cardsLabel {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ─── Religion Card ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 28px;
+  cursor: default;
+  transition: border-color var(--transition-fast);
+  position: relative;
+  height: 220px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card.available {
+  cursor: pointer;
+}
+
+.card.available:hover {
+  border-color: var(--color-accent);
+}
+
+/* animated left accent bar */
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 32px;
+  background: var(--color-accent);
+  transition: height var(--transition-fast);
+}
+
+.card.available:hover::before {
+  height: 100%;
+}
+
+.cardInner {
+  margin-left: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardName {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.cardMeta {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-muted);
+  margin-bottom: 14px;
+}
+
+.cardDesc {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-dim);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.cardAction {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.cardExplore {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-accent);
+}
+
+.cardSoon {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-tag);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--color-border);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footerText {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-muted);
+}

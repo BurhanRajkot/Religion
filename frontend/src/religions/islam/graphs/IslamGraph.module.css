@@ -1,0 +1,52 @@
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+}
+
+.controls {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zoomBtn {
+  width: 32px;
+  height: 32px;
+  background: #181C24;
+  border: 1px solid #252A35;
+  border-radius: 3px;
+  color: #8A857C;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color 180ms;
+}
+
+.zoomBtn:hover {
+  border-color: #C1623F;
+}
+
+.instructionHint {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 10;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #3A3F4D;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.svgGraph {
+  display: block;
+  transform-origin: 0 0;
+  overflow: visible;
+}
