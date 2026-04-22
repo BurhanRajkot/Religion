@@ -1,0 +1,142 @@
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #0F1117;
+  user-select: none;
+}
+
+.topBar {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.breadcrumb {
+  background: rgba(24, 28, 36, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid #252A35;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #8A857C;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.crumbActive {
+  color: #E8E2D9;
+  font-weight: 500;
+}
+
+.searchContainer {
+  position: relative;
+  pointer-events: auto;
+}
+
+.searchInput {
+  background: rgba(24, 28, 36, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid #252A35;
+  border-radius: 6px;
+  padding: 10px 16px;
+  width: 240px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #E8E2D9;
+  outline: none;
+  transition: border-color 180ms;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.searchInput:focus {
+  border-color: #C1623F;
+}
+
+.searchResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: #181C24;
+  border: 1px solid #252A35;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.searchResultItem {
+  padding: 10px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #8A857C;
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+}
+
+.searchResultItem:hover {
+  background: #252A35;
+  color: #E8E2D9;
+}
+
+.controls {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zoomBtn {
+  width: 32px;
+  height: 32px;
+  background: #181C24;
+  border: 1px solid #252A35;
+  border-radius: 3px;
+  color: #8A857C;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color 180ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoomBtn:hover {
+  border-color: #C1623F;
+  color: #E8E2D9;
+}
+
+.instructionHint {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 10;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #3A3F4D;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.svgGraph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
