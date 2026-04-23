@@ -1,6 +1,7 @@
 import Navbar from '../../../components/Navbar';
 import TaxonomyGraph from '../../../components/TaxonomyGraph';
 import { islamTree } from '../data/islamTree';
+import { hasNodeData } from '../data/nodes/index';
 import styles from './IslamTree.module.css';
 
 export default function IslamTree() {
@@ -31,7 +32,7 @@ export default function IslamTree() {
 
       {/* full-screen graph canvas */}
       <div className={styles.graphContainer}>
-        <TaxonomyGraph treeData={islamTree} rootId="islam" />
+        <TaxonomyGraph treeData={islamTree} hasNodeData={hasNodeData} />
       </div>
     </div>
   );
