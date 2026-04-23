@@ -1,61 +1,67 @@
 .page {
   height: 100vh;
-  background: #0F1117;
+  background: #0B0D11;
   display: flex;
   flex-direction: column;
 }
 
+/* ── Breadcrumb bar ─────────────────────────── */
 .breadcrumbBar {
-  height: 44px;
-  background: #181C24;
-  border-bottom: 1px solid #252A35;
+  height: 40px;
+  border-bottom: 1px solid #1A1D24;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 0 32px;
   flex-shrink: 0;
 }
 
 .breadcrumbText {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: #8A857C;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  color: #4B5060;
 }
 
 .breadcrumbActive {
-  color: #E8E2D9;
+  color: #9BA3B0;
 }
 
 .hint {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #3A3F4D;
+  color: #2E3240;
 }
 
+/* ── Page header ────────────────────────────── */
 .header {
-  padding: 28px 40px 16px;
+  padding: 24px 32px 20px;
+  border-bottom: 1px solid #1A1D24;
   flex-shrink: 0;
 }
 
 .title {
-  font-family: 'Playfair Display', serif;
-  font-size: 38px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
   font-weight: 400;
-  color: #E8E2D9;
+  color: #D8D5D0;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .description {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #8A857C;
-  margin-top: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4B5060;
+  margin-top: 6px;
   margin-bottom: 0;
+  max-width: 600px;
 }
 
+/* ── Graph area ─────────────────────────────── */
 .graphContainer {
   flex: 1;
   overflow: hidden;

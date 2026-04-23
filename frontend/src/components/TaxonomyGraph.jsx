@@ -2,14 +2,18 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { useNavigate } from 'react-router-dom';
 import styles from './TaxonomyGraph.module.css';
-import { hasNodeData } from '../religions/islam/data/nodes/index';
 
-const NODE_W = 140;
-const NODE_H = 44;
-const H_GAP = 72;
-const V_GAP = 24;
+const NODE_W = 160;
+const NODE_H = 52;
+const H_GAP = 64;
+const V_GAP = 28;
 
-export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootId = 'islam' }) {
+export default function TaxonomyGraph({ 
+  treeData, 
+  onNodeClick = undefined, 
+  rootId = treeData?.id,
+  hasNodeData = (/** @type {string} */_id) => false
+}) {
   const containerRef = useRef(null);
   const svgRef = useRef(null);
   const zoomRef = useRef(null);
@@ -19,34 +23,34 @@ export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootI
   const [hoveredPath, setHoveredPath] = useState([]);
   const [activeHoverNode, setActiveHoverNode] = useState(null);
 
-  // Parse the data with d3.hierarchy
   const root = useMemo(() => d3.hierarchy(treeData), [treeData]);
-
-  // Flatten for search
   const allNodes = useMemo(() => root.descendants(), [root]);
 
-  // Search results
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
-    return allNodes.filter(n => n.data.name.toLowerCase().includes(q) || (n.data.note && n.data.note.toLowerCase().includes(q))).slice(0, 5);
+    return allNodes.filter(n =>
+      n.data.name.toLowerCase().includes(q) ||
+      (n.data.note && n.data.note.toLowerCase().includes(q))
+    ).slice(0, 6);
   }, [searchQuery, allNodes]);
 
   useEffect(() => {
     if (!containerRef.current || !svgRef.current) return;
 
-    const width = containerRef.current.clientWidth;
+    const width  = containerRef.current.clientWidth;
     const height = containerRef.current.clientHeight;
 
     const svg = d3.select(svgRef.current);
-    const g = svg.select('.zoom-layer');
+    const g   = svg.select('.zoom-layer');
 
     // Layout
     const treeLayout = d3.tree().nodeSize([NODE_W + V_GAP, NODE_H + H_GAP]);
     treeLayout(root);
 
-    // Bounding Box to center properly
-    let x0 = Infinity, x1 = -x0, y0 = Infinity, y1 = -y0;
+    // Bounding box
+    let x0 = Infinity, x1 = -Infinity;
+    let y0 = Infinity, y1 = -Infinity;
     root.each(d => {
       if (d.x > x1) x1 = d.x;
       if (d.x < x0) x0 = d.x;
@@ -54,59 +58,55 @@ export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootI
       if (d.y < y0) y0 = d.y;
     });
 
-    const graphWidth = x1 - x0 + NODE_W;
+    const graphWidth  = x1 - x0 + NODE_W;
     const graphHeight = y1 - y0 + NODE_H;
 
-    // Zoom setup
+    // Zoom
     const zoom = d3.zoom()
-      .scaleExtent([0.1, 3])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
-      });
-    
+      .scaleExtent([0.08, 3])
+      .on('zoom', event => g.attr('transform', event.transform));
+
     zoomRef.current = zoom;
     svg.call(zoom);
-    // Disable double click zoom to avoid confusing the user
-    svg.on("dblclick.zoom", null);
+    svg.on('dblclick.zoom', null);
 
-    // Initial transform to center
-    const initialScale = Math.min((width - 100) / graphWidth, (height - 100) / graphHeight, 1);
-    const initialX = (width - graphWidth * initialScale) / 2 - x0 * initialScale + (NODE_W/2)*initialScale;
-    const initialY = 60; // Padding top
+    const initialScale = Math.min((width - 80) / graphWidth, (height - 80) / graphHeight, 1);
+    const initialX = (width - graphWidth * initialScale) / 2 - x0 * initialScale + (NODE_W / 2) * initialScale;
+    const initialY = 48;
 
     svg.call(zoom.transform, d3.zoomIdentity.translate(initialX, initialY).scale(initialScale));
 
-    // Draw Links
-    const linkGenerator = d3.linkVertical();
-
-    const linkUpdate = g.select('.links').selectAll('.link').data(root.links());
-    linkUpdate.join('path')
+    // --- Links ---
+    const linkGen = d3.linkVertical();
+    g.select('.links').selectAll('.link').data(root.links())
+      .join('path')
       .attr('class', 'link')
-      .attr('d', d => linkGenerator({
+      .attr('d', d => linkGen({
         source: [d.source.x, d.source.y + NODE_H],
         target: [d.target.x, d.target.y]
       }))
       .attr('fill', 'none')
-      .attr('stroke', d => (d.source.data.crossCuts || d.target.data.crossCuts) ? '#C1623F' : '#252A35')
-      .attr('stroke-width', 1.5)
-      .attr('stroke-dasharray', d => (d.source.data.crossCuts || d.target.data.crossCuts) ? '4 4' : 'none')
-      .attr('opacity', d => (d.source.data.crossCuts || d.target.data.crossCuts) ? 0.6 : 1);
+      .attr('stroke', d =>
+        (d.source.data.crossCuts || d.target.data.crossCuts) ? '#4A4030' : '#2A2E3A'
+      )
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', d =>
+        (d.source.data.crossCuts || d.target.data.crossCuts) ? '5 5' : 'none'
+      );
 
-    // Draw Nodes
-    const nodeUpdate = g.select('.nodes').selectAll('.node-group').data(root.descendants(), d => d.data.id);
-    
+    // --- Nodes ---
+    const nodeUpdate = g.select('.nodes').selectAll('.node-group')
+      .data(root.descendants(), d => d.data.id);
+
     const nodeEnter = nodeUpdate.join('g')
       .attr('class', 'node-group')
-      .attr('transform', d => `translate(${d.x - NODE_W/2},${d.y})`)
+      .attr('transform', d => `translate(${d.x - NODE_W / 2},${d.y})`)
       .style('cursor', d => d.data.id !== rootId ? 'pointer' : 'default')
       .on('mouseenter', (event, d) => {
         setActiveHoverNode(d.data.id);
-        const path = d.ancestors().reverse().map(n => n.data.name);
-        setHoveredPath(path);
+        setHoveredPath(d.ancestors().reverse().map(n => n.data.name));
       })
-      .on('mouseleave', () => {
-        setActiveHoverNode(null);
-      })
+      .on('mouseleave', () => setActiveHoverNode(null))
       .on('click', (event, d) => {
         if (d.data.id !== rootId) {
           if (onNodeClick) onNodeClick(d.data);
@@ -114,213 +114,154 @@ export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootI
         }
       });
 
-    // Cleanup previous contents for safety during re-renders
     nodeEnter.selectAll('*').remove();
 
-    // Node Box
+    // Background rect
     nodeEnter.append('rect')
       .attr('width', NODE_W)
       .attr('height', NODE_H)
-      .attr('rx', 4)
-      .attr('ry', 4)
-      .attr('fill', d => {
-        if (d.data.contested) return '#1A1010';
-        if (d.data.crossCuts) return '#1A1810';
-        if (d.data.id === rootId) return '#252A35';
-        return '#181C24';
-      })
+      .attr('rx', 3)
+      .attr('fill', d => d.data.id === rootId ? '#1C2030' : '#111318')
       .attr('stroke', d => {
-        if (d.data.contested) return '#8B3A3A';
-        if (d.data.crossCuts || d.data.id === rootId) return '#C1623F';
-        return '#252A35';
+        if (d.data.id === rootId) return '#6B7280';
+        if (d.data.contested)    return '#5C2F2F';
+        if (d.data.crossCuts)    return '#5C4A2F';
+        return '#232730';
       })
       .attr('stroke-width', 1)
       .attr('class', 'node-box');
 
-    // Contested Marker (Left Edge)
-    nodeEnter.filter(d => d.data.contested).append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', 3)
-      .attr('height', NODE_H)
-      .attr('rx', 2)
-      .attr('fill', '#8B3A3A');
+    // Top border line (accent) — only 3 node types
+    nodeEnter.filter(d => d.data.id === rootId || d.data.contested || d.data.crossCuts)
+      .append('line')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', NODE_W)
+      .attr('y2', 0)
+      .attr('stroke', d => {
+        if (d.data.id === rootId) return '#6B7280';
+        if (d.data.contested)     return '#9B4444';
+        return '#9B7A44';
+      })
+      .attr('stroke-width', 2);
 
-    // Detail Indicator (Dot)
-    nodeEnter.filter(d => hasNodeData(d.data.id)).append('circle')
-      .attr('cx', NODE_W - 10)
-      .attr('cy', 8)
-      .attr('r', 3)
-      .attr('fill', '#C1623F')
-      .attr('opacity', 0.6);
-
-    // Node Name
+    // Name text
     nodeEnter.append('text')
-      .attr('x', d => d.data.contested ? 12 : 8)
-      .attr('y', d => d.data.note ? 17 : NODE_H / 2 + 5)
-      .attr('font-family', 'Inter')
+      .attr('x', 12)
+      .attr('y', d => d.data.note ? 22 : NODE_H / 2 + 5)
+      .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('font-size', '12px')
-      .attr('font-weight', '500')
-      .attr('fill', d => d.data.id === rootId ? '#E8E2D9' : '#C8C2B9')
-      .style('pointer-events', 'none')
+      .attr('font-weight', d => d.data.id === rootId ? '600' : '400')
+      .attr('fill', d => d.data.id === rootId ? '#E0DDD8' : '#B0ADA8')
       .attr('class', 'node-title')
+      .style('pointer-events', 'none')
       .text(d => d.data.name);
 
-    // Note Subtitle
+    // Note text
     nodeEnter.filter(d => d.data.note).append('text')
-      .attr('x', d => d.data.contested ? 12 : 8)
-      .attr('y', 32)
-      .attr('font-family', 'Inter')
+      .attr('x', 12)
+      .attr('y', 40)
+      .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('font-size', '10px')
-      .attr('fill', d => d.data.id === rootId ? '#8A857C' : '#4A4540')
+      .attr('fill', '#4A4A50')
       .style('pointer-events', 'none')
       .text(d => d.data.note);
 
-    // Contested Badge Text
-    nodeEnter.filter(d => d.data.contested).append('g').call(g => {
-      g.append('rect')
-        .attr('x', NODE_W - 58)
-        .attr('y', NODE_H - 14)
-        .attr('width', 52)
-        .attr('height', 12)
-        .attr('rx', 2)
-        .attr('fill', '#1A1010')
-        .attr('stroke', '#8B3A3A')
-        .attr('stroke-width', 0.75);
-      g.append('text')
-        .attr('x', NODE_W - 55)
-        .attr('y', NODE_H - 4)
-        .attr('font-family', 'Inter')
-        .attr('font-size', '9px')
-        .attr('font-weight', '500')
-        .attr('fill', '#C08080')
-        .text('CONTESTED');
-    });
-
-    // Cross-Cuts Badge Text
-    nodeEnter.filter(d => d.data.crossCuts).append('g').call(g => {
-      g.append('rect')
-        .attr('x', NODE_W - 72)
-        .attr('y', NODE_H - 14)
-        .attr('width', 66)
-        .attr('height', 12)
-        .attr('rx', 2)
-        .attr('fill', '#1C1810')
-        .attr('stroke', '#C1623F')
-        .attr('stroke-width', 0.75);
-      g.append('text')
-        .attr('x', NODE_W - 70)
-        .attr('y', NODE_H - 4)
-        .attr('font-family', 'Inter')
-        .attr('font-size', '9px')
-        .attr('font-weight', '500')
-        .attr('fill', '#C1623F')
-        .text('CROSS-BRANCH');
-    });
+    // Has-detail dot (small indicator, top-right)
+    nodeEnter.filter(d => hasNodeData(d.data.id)).append('circle')
+      .attr('cx', NODE_W - 10)
+      .attr('cy', 10)
+      .attr('r', 3)
+      .attr('fill', '#6B7280');
 
   }, [root, rootId, navigate, onNodeClick]);
 
-  // Hover Effect Sync
+  // Hover sync
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
-    
+
     svg.selectAll('.node-group').select('.node-box')
       .attr('fill', d => {
-        const isHover = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHover) return '#252A35';
-        if (d.data.contested) return '#1A1010';
-        if (d.data.crossCuts) return '#1A1810';
-        if (d.data.id === rootId) return '#252A35';
-        return '#181C24';
+        const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
+        if (isHovered)               return '#1C2030';
+        if (d.data.id === rootId)    return '#1C2030';
+        return '#111318';
       })
       .attr('stroke', d => {
-        const isHover = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHover) return '#C1623F';
-        if (d.data.contested) return '#8B3A3A';
-        if (d.data.crossCuts || d.data.id === rootId) return '#C1623F';
-        return '#252A35';
+        const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
+        if (isHovered)               return '#6B7280';
+        if (d.data.id === rootId)    return '#6B7280';
+        if (d.data.contested)        return '#5C2F2F';
+        if (d.data.crossCuts)        return '#5C4A2F';
+        return '#232730';
       });
 
     svg.selectAll('.node-group').select('.node-title')
       .attr('fill', d => {
-        const isHover = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHover || d.data.id === rootId) return '#E8E2D9';
-        return '#C8C2B9';
+        const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
+        if (isHovered || d.data.id === rootId) return '#E0DDD8';
+        return '#B0ADA8';
       });
 
   }, [activeHoverNode, rootId]);
 
-  const flyToNode = (node) => {
+  const flyToNode = node => {
     if (!svgRef.current || !zoomRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
-    
-    // Calculate new transform
-    const scale = 1.2; // Zoom in
-    const x = width / 2 - node.x * scale;
-    const y = height / 2 - node.y * scale - NODE_H/2 * scale;
-
-    svg.transition()
-      .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity.translate(x, y).scale(scale));
+    const w = containerRef.current.clientWidth;
+    const h = containerRef.current.clientHeight;
+    const scale = 1.4;
+    svg.transition().duration(600)
+      .call(zoomRef.current.transform,
+        d3.zoomIdentity
+          .translate(w / 2 - node.x * scale, h / 2 - node.y * scale - (NODE_H / 2) * scale)
+          .scale(scale)
+      );
   };
 
-  const handleZoomIn = () => {
-    if (svgRef.current && zoomRef.current) {
-      d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 1.3);
-    }
-  };
+  const handleZoomIn  = () => svgRef.current && zoomRef.current &&
+    d3.select(svgRef.current).transition().duration(250).call(zoomRef.current.scaleBy, 1.3);
+  const handleZoomOut = () => svgRef.current && zoomRef.current &&
+    d3.select(svgRef.current).transition().duration(250).call(zoomRef.current.scaleBy, 0.77);
 
-  const handleZoomOut = () => {
-    if (svgRef.current && zoomRef.current) {
-      d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 0.7);
-    }
-  };
-
-  const handleSearchResultClick = (node) => {
+  const handleSearchResultClick = node => {
     setSearchQuery('');
     flyToNode(node);
-    
-    // Simulate hover to show breadcrumb
     setActiveHoverNode(node.data.id);
-    const path = node.ancestors().reverse().map(n => n.data.name);
-    setHoveredPath(path);
+    setHoveredPath(node.ancestors().reverse().map(n => n.data.name));
   };
 
   return (
     <div className={styles.container} ref={containerRef}>
-      
-      {/* Top Bar with Breadcrumb and Search */}
+
+      {/* Top bar */}
       <div className={styles.topBar}>
-        <div className={styles.breadcrumb} style={{ opacity: hoveredPath.length ? 1 : 0, transition: 'opacity 200ms' }}>
+        {/* Breadcrumb trail */}
+        <div className={styles.breadcrumb} style={{ opacity: hoveredPath.length ? 1 : 0 }}>
           {hoveredPath.map((p, i) => (
             <React.Fragment key={i}>
-              {i > 0 && <span>/</span>}
-              <span className={i === hoveredPath.length - 1 ? styles.crumbActive : ''}>{p}</span>
+              {i > 0 && <span className={styles.sep}>›</span>}
+              <span className={i === hoveredPath.length - 1 ? styles.crumbActive : styles.crumb}>{p}</span>
             </React.Fragment>
           ))}
         </div>
 
-        <div className={styles.searchContainer}>
-          <input 
-            type="text" 
-            placeholder="Search branches..." 
+        {/* Search */}
+        <div className={styles.searchWrap}>
+          <input
+            type="text"
+            placeholder="Search..."
             className={styles.searchInput}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
           />
           {searchResults.length > 0 && (
             <div className={styles.searchResults}>
-              {searchResults.map((result) => (
-                <div 
-                  key={result.data.id} 
-                  className={styles.searchResultItem}
-                  onClick={() => handleSearchResultClick(result)}
-                >
-                  <div style={{ color: '#E8E2D9' }}>{result.data.name}</div>
-                  {result.data.note && <div style={{ fontSize: '11px', marginTop: '2px' }}>{result.data.note}</div>}
+              {searchResults.map(r => (
+                <div key={r.data.id} className={styles.searchItem} onClick={() => handleSearchResultClick(r)}>
+                  <span className={styles.searchName}>{r.data.name}</span>
+                  {r.data.note && <span className={styles.searchNote}>{r.data.note}</span>}
                 </div>
               ))}
             </div>
@@ -328,21 +269,29 @@ export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootI
         </div>
       </div>
 
-      {/* Zoom Controls */}
+      {/* Zoom controls */}
       <div className={styles.controls}>
-        <button className={styles.zoomBtn} onClick={handleZoomIn}>+</button>
-        <button className={styles.zoomBtn} onClick={handleZoomOut}>−</button>
+        <button className={styles.zoomBtn} onClick={handleZoomIn}  aria-label="Zoom in">+</button>
+        <button className={styles.zoomBtn} onClick={handleZoomOut} aria-label="Zoom out">−</button>
       </div>
 
-      {/* Instruction Hint */}
-      <div className={styles.instructionHint}>
-        Scroll to zoom · drag to pan · click a node to explore
+      {/* Legend */}
+      <div className={styles.legend}>
+        <span className={styles.legendItem}>
+          <span className={styles.legendDot} style={{ borderColor: '#5C2F2F' }} /> Contested
+        </span>
+        <span className={styles.legendItem}>
+          <span className={styles.legendDash} /> Cross-branch
+        </span>
+        <span className={styles.legendItem}>
+          <span className={styles.legendDot} style={{ borderColor: '#6B7280' }} /> Has entry
+        </span>
       </div>
 
       <svg ref={svgRef} className={styles.svgGraph}>
         <g className="zoom-layer">
-          <g className="links"></g>
-          <g className="nodes"></g>
+          <g className="links" />
+          <g className="nodes" />
         </g>
       </svg>
     </div>
