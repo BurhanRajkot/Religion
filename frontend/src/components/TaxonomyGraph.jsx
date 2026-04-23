@@ -120,30 +120,21 @@ export default function TaxonomyGraph({
     nodeEnter.append('rect')
       .attr('width', NODE_W)
       .attr('height', NODE_H)
-      .attr('rx', 3)
-      .attr('fill', d => d.data.id === rootId ? '#1C2030' : '#111318')
+      .attr('rx', 6)
+      .attr('fill', d => {
+        if (d.data.id === rootId) return '#1E293B';
+        if (d.data.contested)    return '#1F1315';
+        if (d.data.crossCuts)    return '#1F1A12';
+        return '#0F111A';
+      })
       .attr('stroke', d => {
-        if (d.data.id === rootId) return '#6B7280';
-        if (d.data.contested)    return '#5C2F2F';
-        if (d.data.crossCuts)    return '#5C4A2F';
-        return '#232730';
+        if (d.data.id === rootId) return '#64748B';
+        if (d.data.contested)    return '#7F1D1D';
+        if (d.data.crossCuts)    return '#92400E';
+        return '#2A2F3A';
       })
       .attr('stroke-width', 1)
       .attr('class', 'node-box');
-
-    // Top border line (accent) — only 3 node types
-    nodeEnter.filter(d => d.data.id === rootId || d.data.contested || d.data.crossCuts)
-      .append('line')
-      .attr('x1', 0)
-      .attr('y1', 0)
-      .attr('x2', NODE_W)
-      .attr('y2', 0)
-      .attr('stroke', d => {
-        if (d.data.id === rootId) return '#6B7280';
-        if (d.data.contested)     return '#9B4444';
-        return '#9B7A44';
-      })
-      .attr('stroke-width', 2);
 
     // Name text
     nodeEnter.append('text')
@@ -151,8 +142,8 @@ export default function TaxonomyGraph({
       .attr('y', d => d.data.note ? 22 : NODE_H / 2 + 5)
       .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('font-size', '12px')
-      .attr('font-weight', d => d.data.id === rootId ? '600' : '400')
-      .attr('fill', d => d.data.id === rootId ? '#E0DDD8' : '#B0ADA8')
+      .attr('font-weight', d => d.data.id === rootId ? '600' : '500')
+      .attr('fill', d => d.data.id === rootId ? '#FFFFFF' : '#F1F5F9')
       .attr('class', 'node-title')
       .style('pointer-events', 'none')
       .text(d => d.data.name);
@@ -163,7 +154,7 @@ export default function TaxonomyGraph({
       .attr('y', 40)
       .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('font-size', '10px')
-      .attr('fill', '#4A4A50')
+      .attr('fill', '#94A3B8')
       .style('pointer-events', 'none')
       .text(d => d.data.note);
 
@@ -172,7 +163,7 @@ export default function TaxonomyGraph({
       .attr('cx', NODE_W - 10)
       .attr('cy', 10)
       .attr('r', 3)
-      .attr('fill', '#6B7280');
+      .attr('fill', '#64748B');
 
   }, [root, rootId, navigate, onNodeClick]);
 
@@ -184,24 +175,26 @@ export default function TaxonomyGraph({
     svg.selectAll('.node-group').select('.node-box')
       .attr('fill', d => {
         const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHovered)               return '#1C2030';
-        if (d.data.id === rootId)    return '#1C2030';
-        return '#111318';
+        if (isHovered)               return '#1E293B';
+        if (d.data.id === rootId)    return '#1E293B';
+        if (d.data.contested)        return '#2C1B1E';
+        if (d.data.crossCuts)        return '#2C2418';
+        return '#0F111A';
       })
       .attr('stroke', d => {
         const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHovered)               return '#6B7280';
-        if (d.data.id === rootId)    return '#6B7280';
-        if (d.data.contested)        return '#5C2F2F';
-        if (d.data.crossCuts)        return '#5C4A2F';
-        return '#232730';
+        if (isHovered)               return '#64748B';
+        if (d.data.id === rootId)    return '#64748B';
+        if (d.data.contested)        return '#991B1B';
+        if (d.data.crossCuts)        return '#B45309';
+        return '#2A2F3A';
       });
 
     svg.selectAll('.node-group').select('.node-title')
       .attr('fill', d => {
         const isHovered = d.data.id === activeHoverNode && d.data.id !== rootId;
-        if (isHovered || d.data.id === rootId) return '#E0DDD8';
-        return '#B0ADA8';
+        if (isHovered || d.data.id === rootId) return '#FFFFFF';
+        return '#F1F5F9';
       });
 
   }, [activeHoverNode, rootId]);
@@ -278,13 +271,13 @@ export default function TaxonomyGraph({
       {/* Legend */}
       <div className={styles.legend}>
         <span className={styles.legendItem}>
-          <span className={styles.legendDot} style={{ borderColor: '#5C2F2F' }} /> Contested
+          <span className={styles.legendDot} style={{ borderColor: '#7F1D1D' }} /> Contested
         </span>
         <span className={styles.legendItem}>
           <span className={styles.legendDash} /> Cross-branch
         </span>
         <span className={styles.legendItem}>
-          <span className={styles.legendDot} style={{ borderColor: '#6B7280' }} /> Has entry
+          <span className={styles.legendDot} style={{ borderColor: '#64748B' }} /> Has entry
         </span>
       </div>
 
