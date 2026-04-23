@@ -9,7 +9,7 @@ const NODE_H = 44;
 const H_GAP = 72;
 const V_GAP = 24;
 
-export default function TaxonomyGraph({ treeData, onNodeClick, rootId = 'islam' }) {
+export default function TaxonomyGraph({ treeData, onNodeClick = undefined, rootId = 'islam' }) {
   const containerRef = useRef(null);
   const svgRef = useRef(null);
   const zoomRef = useRef(null);
@@ -77,16 +77,14 @@ export default function TaxonomyGraph({ treeData, onNodeClick, rootId = 'islam' 
     svg.call(zoom.transform, d3.zoomIdentity.translate(initialX, initialY).scale(initialScale));
 
     // Draw Links
-    const linkGenerator = d3.linkVertical()
-      .x(d => d.x)
-      .y(d => d.y);
+    const linkGenerator = d3.linkVertical();
 
     const linkUpdate = g.select('.links').selectAll('.link').data(root.links());
     linkUpdate.join('path')
       .attr('class', 'link')
       .attr('d', d => linkGenerator({
-        source: { x: d.source.x, y: d.source.y + NODE_H },
-        target: { x: d.target.x, y: d.target.y }
+        source: [d.source.x, d.source.y + NODE_H],
+        target: [d.target.x, d.target.y]
       }))
       .attr('fill', 'none')
       .attr('stroke', d => (d.source.data.crossCuts || d.target.data.crossCuts) ? '#C1623F' : '#252A35')
